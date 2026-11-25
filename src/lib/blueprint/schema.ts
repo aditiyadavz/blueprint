@@ -29,8 +29,9 @@ export const contactSchema = z.object({
 export const leadRequestSchema = z.object({
   answers: answersSchema,
   contact: contactSchema,
-  // Honeypot: real users never see this field, bots fill it in.
-  website: z.string().max(0).optional().or(z.literal("")),
+  // Honeypot: real users never see this field, bots fill it in. Accepted here
+  // so the route can fake a success instead of revealing the trap with a 422.
+  website: z.string().max(500).optional(),
 });
 
 export type LeadRequest = z.infer<typeof leadRequestSchema>;

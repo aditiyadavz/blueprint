@@ -29,14 +29,14 @@ export const PROJECT_TYPES = {
     blurb: "Multi-tenant product with subscriptions",
     icon: "☁️",
     baseWeeks: 10,
-    stack: ["Next.js + TypeScript", "NestJS API", "PostgreSQL (multi-tenant)", "Stripe / Razorpay", "AWS"],
+    stack: ["Next.js + TypeScript", "NestJS API", "PostgreSQL (multi-tenant)", "Razorpay / Stripe", "AWS"],
   },
   ecommerce: {
     label: "E-commerce store",
     blurb: "Catalog, cart, checkout, orders",
     icon: "🛒",
     baseWeeks: 6,
-    stack: ["Next.js storefront", "Headless commerce (Medusa / Shopify)", "Razorpay", "CDN image pipeline"],
+    stack: ["Next.js storefront", "Headless commerce (Medusa / Shopify)", "Razorpay / Stripe", "CDN image pipeline"],
   },
   "website-seo": {
     label: "Website + technical SEO",

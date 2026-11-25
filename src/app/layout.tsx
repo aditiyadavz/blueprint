@@ -24,10 +24,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               Blueprint <span className="hidden font-medium text-brand-600/70 sm:inline">for Cynbit</span>
             </Link>
             <div className="flex items-center gap-2 text-sm font-semibold">
-              <Link href="/admin" className="rounded-full px-4 py-2 text-brand-800 hover:bg-brand-50">
+              <Link href="/admin" className="hidden whitespace-nowrap rounded-full px-4 py-2 text-brand-800 hover:bg-brand-50 sm:inline-block">
                 Team dashboard
               </Link>
-              <Link href="/blueprint" className="rounded-full bg-brand-700 px-4 py-2 text-white hover:bg-brand-800">
+              <Link href="/blueprint" className="whitespace-nowrap rounded-full bg-brand-700 px-4 py-2 text-white hover:bg-brand-800">
                 Start blueprint
               </Link>
             </div>

@@ -58,7 +58,12 @@ export async function GET(req: NextRequest) {
   const leads = await getStore().list();
 
   if (req.nextUrl.searchParams.get("format") === "csv") {
-    const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    // Quote every cell; prefix cells starting with = + - @ so spreadsheet apps
+    // don't execute user-supplied text as a formula (CSV injection).
+    const esc = (v: unknown) => {
+      const s = String(v ?? "");
+      return `"${(/^[=+\-@\t\r]/.test(s) ? "'" + s : s).replace(/"/g, '""')}"`;
+    };
     const header = ["created_at", "name", "email", "company", "phone", "project_type", "budget", "timeline", "score", "tier", "status", "est_cost_low", "est_cost_high"];
     const rows = leads.map((l) =>
       [l.createdAt, l.contact.name, l.contact.email, l.contact.company, l.contact.phone, l.answers.projectType, l.answers.budget, l.answers.timeline, l.score.score, l.score.tier, l.status, l.blueprint.cost.low, l.blueprint.cost.high]

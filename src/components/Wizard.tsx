@@ -69,7 +69,10 @@ export function Wizard() {
   const [serverError, setServerError] = useState("");
   const [result, setResult] = useState<{ blueprint: Blueprint; name: string } | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const restored = useRef(false);
+  // `hydrated` is state (not a ref) so the save effect only runs after the
+  // restored draft has actually rendered; otherwise the first save would
+  // overwrite the stored draft with the empty initial state.
+  const [hydrated, setHydrated] = useState(false);
 
   // Resume an unfinished blueprint (answers only, never contact details).
   useEffect(() => {
@@ -81,11 +84,11 @@ export function Wizard() {
         setStep(Math.min(s, STEPS.length - 1));
       }
     } catch {}
-    restored.current = true;
+    setHydrated(true);
   }, []);
   useEffect(() => {
-    if (restored.current && !result) localStorage.setItem(DRAFT_KEY, JSON.stringify({ draft, step }));
-  }, [draft, step, result]);
+    if (hydrated && !result) localStorage.setItem(DRAFT_KEY, JSON.stringify({ draft, step }));
+  }, [hydrated, draft, step, result]);
 
   useEffect(() => headingRef.current?.focus(), [step, result]);
 
@@ -336,6 +339,7 @@ export function Wizard() {
           </button>
           {step < STEPS.length - 1 ? (
             <button
+              key="next"
               type="button"
               disabled={!canContinue}
               onClick={() => setStep((s) => s + 1)}
@@ -345,6 +349,7 @@ export function Wizard() {
             </button>
           ) : (
             <button
+              key="submit"
               type="submit"
               form="contact-form"
               disabled={status === "submitting"}

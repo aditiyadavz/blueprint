@@ -87,7 +87,7 @@ function buildPhases(totalWeeks: number, a: ProjectAnswers): Phase[] {
   const t = PROJECT_TYPES[a.projectType];
   const share: [string, number, string][] = [
     ["Discovery & audit", 0.08, "Workshops to map workflows, users, constraints and success metrics."],
-    ["Strategy & blueprinting", 0.07, `Architecture, data model and integration plan for your ${t.label.toLowerCase()}.`],
+    ["Strategy & blueprinting", 0.07, `${t.label} architecture, data model and integration plan, signed off before build.`],
   ];
   if (a.design === "need-design") {
     share.push(["High-fidelity design", 0.15, "Wireframes → clickable prototype → design system, validated with you."]);
@@ -133,10 +133,11 @@ export function generateBlueprint(a: ProjectAnswers): Blueprint {
 
   const recommendations: string[] = [];
   if (budgetFit === "over" || budgetFit === "stretch" || timelineFit === "tight") {
-    const core = { ...a, features: a.features.slice(0, 2), design: a.design };
-    const coreCost = round(estimateEffort(core) * RATE_PER_PERSON_WEEK, 10_000);
+    // Phase 1 = MVP-scale build of the core plus the first feature picked.
+    const core = { ...a, scale: "mvp" as const, features: a.features.slice(0, 1) };
+    const coreCost = round(estimateEffort(core) * RATE_PER_PERSON_WEEK * 0.85, 10_000);
     recommendations.push(
-      `Ship in phases: a focused Phase 1 with ${core.features.length ? core.features.map((f) => FEATURES[f].label.toLowerCase()).join(" and ") : "the core flows only"} (~${formatINR(coreCost)}), then add the rest once it's live.`,
+      `Ship in phases: a focused MVP with the core flows${core.features.length ? ` and ${FEATURES[core.features[0]].label.toLowerCase()}` : ""} (from ~${formatINR(coreCost)}), then add the rest once it's live and earning.`,
     );
   }
   if (a.design === "have-designs") recommendations.push("Share your design files at kickoff — this cuts the timeline by about two weeks.");

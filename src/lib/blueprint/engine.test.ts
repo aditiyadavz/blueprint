@@ -60,6 +60,9 @@ describe("generateBlueprint", () => {
     const big = generateBlueprint({ ...base, projectType: "saas", features: ["payments", "ai-features", "realtime"], scale: "enterprise", budget: "under-1l" });
     expect(big.budgetFit).toBe("over");
     expect(big.recommendations[0]).toMatch(/Ship in phases/);
+    // The suggested MVP must be cheaper than the full scope.
+    const mvp = Number(big.recommendations[0].match(/₹([\d.]+)L/)![1]) * 100_000;
+    expect(mvp).toBeLessThan(big.cost.low);
   });
 
   it("flags tight timelines", () => {
@@ -101,8 +104,8 @@ describe("leadRequestSchema", () => {
     expect(leadRequestSchema.safeParse({ answers: base, contact: { ...contact, email: "nope" } }).success).toBe(false);
   });
 
-  it("rejects a filled honeypot", () => {
-    expect(leadRequestSchema.safeParse({ answers: base, contact, website: "spam.example" }).success).toBe(false);
+  it("passes a filled honeypot through so the route can silently drop it", () => {
+    expect(leadRequestSchema.parse({ answers: base, contact, website: "spam.example" }).website).toBe("spam.example");
   });
 });
 
